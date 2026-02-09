@@ -1,25 +1,34 @@
 import torch
 import torch.nn as nn
-from .KAN import KANNet
+from KAN import KAN
+from config import NET_CONFIG
+
 
 class CoupledPIKAN(nn.Module):
-    def __init__(self, degree=3, num_internal_knots=5):
-        super().__init__()
-        # dims 参考表3：Φ1(6,64,64,1), Φ2(7,64,64,2), Φ3(6,64,64,3)
-        self.phi1 = KANNet([6, 64, 64, 1], degree=degree, num_internal_knots=num_internal_knots)
-        self.phi2 = KANNet([7, 64, 64, 2], degree=degree, num_internal_knots=num_internal_knots)
-        self.phi3 = KANNet([6, 64, 64, 3], degree=degree, num_internal_knots=num_internal_knots)
+    def __init__(self):
+        super(CoupledPIKAN, self).__init__()
+        c = NET_CONFIG
 
-    @torch.no_grad()
-    def freeze_except(self, which: str):
-        for name, p in self.named_parameters():
-            p.requires_grad = (name.startswith(which))
+        # Sub-network 1: Predict T2
+        # Input: [t, T2_prev, F1, I, Ta, T4_prev] (Example dim=6)
+        self.phi1 = KAN([c['phi1_in'], c['hidden'], c['hidden'], c['phi1_out']],
+                        grid_size=c['grid_size'], spline_order=c['spline_order'])
 
-    def forward_phi1(self, x1):
-        return self.phi1(x1)  # (B,1) -> T2
+        # Sub-network 2: Predict T3, T4
+        # Input: [t, T3_prev, T4_prev, V1, I, Ta, T2_pred] (Example dim=7)
+        self.phi2 = KAN([c['phi2_in'], c['hidden'], c['hidden'], c['phi2_out']],
+                        grid_size=c['grid_size'], spline_order=c['spline_order'])
 
-    def forward_phi2(self, x2):
-        return self.phi2(x2)  # (B,2) -> (T3,T4)
+        # Sub-network 3: Predict T5, T6, T8
+        # Input: [t, T6_prev, T8_prev, V1, I, Ta] (Example dim=6)
+        self.phi3 = KAN([c['phi3_in'], c['hidden'], c['hidden'], c['phi3_out']],
+                        grid_size=c['grid_size'], spline_order=c['spline_order'])
 
-    def forward_phi3(self, x3):
-        return self.phi3(x3)  # (B,3) -> (T5,T6,T8)
+    def forward_phi1(self, x):
+        return self.phi1(x)
+
+    def forward_phi2(self, x):
+        return self.phi2(x)
+
+    def forward_phi3(self, x):
+        return self.phi3(x)
