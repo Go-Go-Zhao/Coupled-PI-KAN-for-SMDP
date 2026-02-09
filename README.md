@@ -1,3 +1,4 @@
+```text
 project/
 ├── train.py                  # Main training entry point
 │
