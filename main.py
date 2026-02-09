@@ -6,7 +6,6 @@ from Train import train_coupled_model
 from config import DEVICE, NET_CONFIG
 
 
-# Dummy Dataset class since we don't have the csv
 class SMDPDataset(Dataset):
     def __init__(self, size=100):
         self.size = size
@@ -55,4 +54,5 @@ def main():
 
 
 if __name__ == "__main__":
+
     main()
