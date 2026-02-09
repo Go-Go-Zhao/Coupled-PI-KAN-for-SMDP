@@ -12,7 +12,7 @@ def train_coupled_model(model, dataloader):
 
     epochs = NET_CONFIG['epochs']
 
-    # 模拟 Sequential Training Strategy (Algorithm 1)
+    # Sequential Training Strategy (Algorithm 1)
     # Step 2: Train Phi1 (T2)
     print("Step 2: Training Sub-network 1 (T2)...")
     model.phi1.train()
@@ -44,7 +44,7 @@ def train_coupled_model(model, dataloader):
             # Data Loss
             loss_data = torch.nn.functional.mse_loss(T2_pred, T2_true)
 
-            # Adaptive Weighting (Simplified Eq 34-36)
+            # Adaptive Weighting 
             # Real impl requires calculating grad norms
             w_phy = 0.5
 
@@ -98,3 +98,4 @@ def train_coupled_model(model, dataloader):
     # ... Implementation similar to above ...
 
     print("Training Cycle Completed.")
+
