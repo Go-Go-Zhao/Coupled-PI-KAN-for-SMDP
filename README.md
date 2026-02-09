@@ -1,7 +1,9 @@
 ```text
 project/
 ├── train.py                  # Main training entry point
-│
+│── main.py
+├── config.py
+├
 ├── data/
 │   └── dataset.py             # data construction
 │
