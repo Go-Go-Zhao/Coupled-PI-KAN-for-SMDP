@@ -13,15 +13,13 @@ def solar_field_ode(t, T2, inputs, gradients):
     I = inputs['I']
     Ta = inputs['Ta']
     F1 = inputs['F1']
-    T1 = inputs['T1']  # T1 approx T4
+    T1 = inputs['T1']  
 
-    # Eq 3: T_bar
     T_bar = (T1 + T2) / 2
 
     # Eq 2: Equivalent flow rate (simplified conversion)
     m_es = F1 * p['rho'] / 60000.0  # simple unit conversion placeholder
 
-    # RHS of Eq 1
     term1 = p['beta'] * I
     term2 = (p['H'] / p['L2']) * (T_bar - Ta)
     term3 = p['c_p1'] * m_es * ((T2 - T1) / p['L1'])  # Note: Paper has term T2-T1/L1
@@ -41,7 +39,7 @@ def storage_tank_ode(t, T3, T4, inputs, grads_T3, grads_T4):
     T6 = inputs['T6_prev']  # From previous step/data
     V1 = inputs['V1']
     Ta = inputs['Ta']
-    m1 = 0.5  # Assumed constant or derived from pump
+    m1 = 0.5  
     m2 = 0.5
 
     # Eq 5 RHS (T3)
@@ -73,3 +71,4 @@ def compute_gradients(output, input_var):
         grad_outputs=torch.ones_like(output),
         create_graph=True
     )[0]
+
