@@ -3,7 +3,7 @@ project/
 ├── train.py                  # Main training entry point
 │
 ├── data/
-│   └── dataset.py             # data construction (Eqs. 28–30)
+│   └── dataset.py             # data construction
 │
 ├── models/
 │   ├── kan.py                 # Kolmogorov–Arnold Network (B-spline based)
